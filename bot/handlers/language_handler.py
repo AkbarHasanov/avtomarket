@@ -1,6 +1,6 @@
 from telebot import types
 from bot.repository.user import *
-from bot.const import *
+from const import *
 
 
 def handle_russian(bot, callback):

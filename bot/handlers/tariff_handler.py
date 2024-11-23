@@ -1,5 +1,5 @@
 from telebot import types
-from bot.const import CALLBACK_DATA_CLICK, CALLBACK_DATA_PAYME
+from const import CALLBACK_DATA_CLICK, CALLBACK_DATA_PAYME
 from bot.repository.tariff import get_translation
 
 from bot.repository.user import *

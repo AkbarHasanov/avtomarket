@@ -1,7 +1,7 @@
 from telebot import types
 import config
 from bot.repository.user import *
-from bot.const import *
+from const import *
 
 def start_command(bot, message):
     user = get_user_by_chat_id(message.chat.id)

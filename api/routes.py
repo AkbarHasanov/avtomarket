@@ -1,25 +1,190 @@
+import hashlib
+import uuid
+
 from flask import Blueprint, jsonify, request
-from bot.database.session import SessionLocal
-from bot.models.user import User
+
+import config
+from bot.repository.car import get_car_by_id, update_status
+from bot.models.click import Click
+from bot.models.car import PaymentStatus
+from bot.repository.click import create
+from const import *
 
 api_blueprint = Blueprint('api', __name__)
 
 
 @api_blueprint.route('/click/prepare', methods=['POST'])
 def prepare():
-    db = SessionLocal()
-    users = db.query(User).all()
-    return jsonify([{"id": user.id, "username": user.username, "chat_id": user.chat_id} for user in users])
+    request_data = request.get_json()
+
+    click_transaction = Click()
+    click_transaction.click_trans_id = request_data.get('click_trans_id')
+    click_transaction.service_id = request_data.get('service_id')
+    click_transaction.click_paydoc_id = request_data.get('click_paydoc_id')
+    click_transaction.merchant_trans_id = request_data.get('merchant_trans_id')
+    click_transaction.amount = request_data.get('amount')
+    click_transaction.action = request_data.get('action')
+    click_transaction.error = request_data.get('error')
+    click_transaction.error_note = request_data.get('error_note')
+    click_transaction.sign_time = request_data.get('sign_time')
+    click_transaction.sign_string = request_data.get('sign_string')
+
+    transaction_id = create(click_transaction)
+
+    if click_transaction.error < 0:
+        return jsonify({
+            "click_trans_id": click_transaction.click_trans_id,
+            "merchant_trans_id": click_transaction.merchant_trans_id,
+            "merchant_prepare_id": transaction_id,
+            "error": CLICK_TRANSACTION_CANCELLED,
+            "error_note": click_transaction.error_note,
+        })
+
+    if validate_sign_string(click_transaction.sign_string, click_transaction.service_id, config.CLICK_SECRET_KEY,
+                            click_transaction.merchant_trans_id, click_transaction.amount, click_transaction.action,
+                            click_transaction.sign_time, click_transaction.sign_string):
+        return jsonify({
+            "click_trans_id": click_transaction.click_trans_id,
+            "merchant_trans_id": click_transaction.merchant_trans_id,
+            "merchant_prepare_id": transaction_id,
+            "error": CLICK_INCORRECT_SIGN_CHECK,
+            "error_note": "sign sting is incorrect",
+        })
+
+    car = get_car_by_id(click_transaction.click_trans_id)
+    if car is None:
+        return jsonify({
+            "click_trans_id": click_transaction.click_trans_id,
+            "merchant_trans_id": click_transaction.merchant_trans_id,
+            "merchant_prepare_id": transaction_id,
+            "error": CLICK_TRANSACTION_DOES_NOT_EXIST,
+            "error_note": "already paid",
+        })
+
+    if car.payment_status == PaymentStatus.PAID:
+        return jsonify({
+            "click_trans_id": click_transaction.click_trans_id,
+            "merchant_trans_id": click_transaction.merchant_trans_id,
+            "merchant_prepare_id": transaction_id,
+            "error": CLICK_ALREADY_PAID,
+            "error_note": "already paid",
+        })
+
+    if car.tariff.amount != click_transaction.amount:
+        return jsonify({
+            "click_trans_id": click_transaction.click_trans_id,
+            "merchant_trans_id": click_transaction.merchant_trans_id,
+            "merchant_prepare_id": transaction_id,
+            "error": CLICK_INCORRECT_AMOUNT,
+            "error_note": "incorrect amount",
+        })
+
+    return jsonify({
+        "click_trans_id": click_transaction.click_trans_id,
+        "merchant_trans_id": click_transaction.merchant_trans_id,
+        "merchant_prepare_id": transaction_id,
+        "error": 0,
+        "error_note": "",
+    })
 
 
 @api_blueprint.route('/click/complete', methods=['POST'])
 def complete():
-    db = SessionLocal()
-    data = request.json
-    if not data.get('username') or not data.get('chat_id'):
-        return jsonify({"error": "Invalid input"}), 400
+    request_data = request.get_json()
 
-    user = User(username=data['username'], chat_id=data['chat_id'])
-    db.add(user)
-    db.commit()
-    return jsonify({"message": "User added", "user": {"id": user.id, "username": user.username}}), 201
+    click_trans_id = request_data.get('click_trans_id')
+    service_id = request_data.get('service_id')
+    merchant_trans_id = request_data.get('merchant_trans_id')
+    transaction_id = request_data.get('merchant_prepare_id')
+    amount = request_data.get('amount')
+    action = request_data.get('action')
+    error = request_data.get('error')
+    error_note = request_data.get('error_note')
+    sign_time = request_data.get('sign_time')
+    sign_string = request_data.get('sign_string')
+
+    if error < 0:
+        return jsonify({
+            "click_trans_id": click_trans_id,
+            "merchant_trans_id": merchant_trans_id,
+            "merchant_confirm_id": transaction_id,
+            "error": CLICK_TRANSACTION_CANCELLED,
+            "error_note": error_note,
+        })
+
+    if validate_sign_string(sign_string, service_id, config.CLICK_SECRET_KEY,
+                            merchant_trans_id, amount, action,
+                            sign_time, sign_string):
+        return jsonify({
+            "click_trans_id": click_trans_id,
+            "merchant_trans_id": merchant_trans_id,
+            "merchant_confirm_id": transaction_id,
+            "error": CLICK_INCORRECT_SIGN_CHECK,
+            "error_note": "sign sting is incorrect",
+        })
+
+    car = get_car_by_id(click_trans_id)
+    if car is None:
+        return jsonify({
+            "click_trans_id": click_trans_id,
+            "merchant_trans_id": merchant_trans_id,
+            "merchant_confirm_id": transaction_id,
+            "error": CLICK_TRANSACTION_DOES_NOT_EXIST,
+            "error_note": "transaction not found",
+        })
+
+    if car.payment_status == PaymentStatus.PAID:
+        return jsonify({
+            "click_trans_id": click_trans_id,
+            "merchant_trans_id": merchant_trans_id,
+            "merchant_confirm_id": transaction_id,
+            "error": CLICK_ALREADY_PAID,
+            "error_note": "already paid",
+        })
+
+    if car.tariff.amount != amount:
+        return jsonify({
+            "click_trans_id": click_trans_id,
+            "merchant_trans_id": merchant_trans_id,
+            "merchant_confirm_id": transaction_id,
+            "error": CLICK_INCORRECT_AMOUNT,
+            "error_note": "incorrect amount",
+        })
+
+    update_status(car, PaymentStatus.PAID)
+
+    return jsonify({
+        "click_trans_id": click_trans_id,
+        "merchant_trans_id": merchant_trans_id,
+        "merchant_confirm_id": transaction_id,
+        "error": 0,
+        "error_note": "",
+    })
+
+
+def validate_sign_string(click_trans_id, service_id, secret_key, merchant_trans_id, amount, action, sign_time,
+                         received_sign_string):
+    """
+    Validate the sign_string of the incoming request.
+
+    Parameters:
+        click_trans_id (str): Click transaction ID.
+        service_id (str): Service ID.
+        secret_key (str): Secret key issued to the provider.
+        merchant_trans_id (str): Merchant transaction ID.
+        amount (float): Transaction amount.
+        action (int): Action type.
+        sign_time (str): Timestamp of the sign.
+        received_sign_string (str): Sign string received in the request.
+
+    Returns:
+        bool: True if valid, False otherwise.
+    """
+    # Concatenate the parameters in the correct order
+    data_string = f"{click_trans_id}{service_id}{secret_key}{merchant_trans_id}{amount}{action}{sign_time}"
+
+    # Generate the MD5 hash
+    generated_hash = hashlib.md5(data_string.encode('utf-8')).hexdigest()
+
+    # Compare with the received sign_string
+    return generated_hash == received_sign_string

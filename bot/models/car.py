@@ -1,7 +1,16 @@
-from sqlalchemy import Column, Integer, ForeignKey, String, DateTime
+import enum
+from enum import EnumType
+
+from sqlalchemy import Column, Integer, ForeignKey, String, DateTime, Enum
 from sqlalchemy.orm import relationship
 from bot.models.base import Base
 import datetime
+
+
+# Define an Enum for status
+class PaymentStatus(enum.Enum):
+    PENDING = "pending"
+    PAID = "paid"
 
 
 class Car(Base):
@@ -26,6 +35,7 @@ class Car(Base):
     phone_number = Column(String)
     tariff_id = Column(String, ForeignKey('tariffs.id'), nullable=False, )
     created_at = Column(DateTime, default=datetime.datetime.now())
+    payment_status = Column(Enum(PaymentStatus), nullable=False, default=PaymentStatus.PENDING)
 
     owner = relationship('User', back_populates="cars")
     photos = relationship('CarPhoto', back_populates='car')

@@ -1,8 +1,7 @@
 from functools import partial
 
-from bot.models.car import Car
 from telebot import TeleBot, types
-from bot.const import CALLBACK_DATA_ADD_PHOTOS, CALLBACK_DATA_ADD_ADVERTISEMENT
+from const import CALLBACK_DATA_ADD_PHOTOS, CALLBACK_DATA_ADD_ADVERTISEMENT
 
 from bot.repository.user import *
 from bot.repository.car import *

@@ -1,5 +1,5 @@
 from telebot import TeleBot
-from bot.const import *
+from const import *
 from . import language_handler, question_handler, addvertisement_handler, tariff_handler
 
 
