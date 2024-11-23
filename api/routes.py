@@ -51,7 +51,7 @@ def prepare():
             "error_note": "sign sting is incorrect",
         })
 
-    car = get_car_by_id(click_transaction.click_trans_id)
+    car = get_car_by_id(click_transaction.merchant_trans_id)
     if car is None:
         return jsonify({
             "click_trans_id": click_transaction.click_trans_id,
@@ -123,7 +123,7 @@ def complete():
             "error_note": "sign sting is incorrect",
         })
 
-    car = get_car_by_id(click_trans_id)
+    car = get_car_by_id(merchant_trans_id)
     if car is None:
         return jsonify({
             "click_trans_id": click_trans_id,
