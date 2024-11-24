@@ -1,6 +1,6 @@
 from telebot import TeleBot
 from const import *
-from . import language_handler, question_handler, addvertisement_handler, tariff_handler
+from . import language_handler, question_handler, addvertisement_handler, tariff_handler, payment_handler
 
 
 def register_callback_handlers(bot: TeleBot):
@@ -26,7 +26,7 @@ def register_callback_handlers(bot: TeleBot):
             tariff_handler.choose_payment_system(bot, callback)
 
         elif callback.data == CALLBACK_DATA_CLICK:
-            tariff_handler.click_payment(bot, callback)
+            payment_handler.click_payment(bot, callback)
 
         elif callback.data == CALLBACK_DATA_PAYME:
-            tariff_handler.payme_payment(bot, callback)
+            payment_handler.payme_payment(bot, callback)

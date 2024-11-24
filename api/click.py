@@ -8,7 +8,7 @@ from bot.repository.click import create
 from const import *
 
 
-def click_prepare(request_data):
+def prepare(request_data):
     click_transaction = Click()
     click_transaction.click_trans_id = request_data.get('click_trans_id')
     click_transaction.service_id = request_data.get('service_id')
@@ -141,6 +141,9 @@ def complete(request_data):
         })
 
     update_status(car, PaymentStatus.PAID)
+
+
+
 
     return jsonify({
         "click_trans_id": click_trans_id,

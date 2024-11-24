@@ -1,6 +1,5 @@
 from flask import Blueprint, request
-from api.click import click_prepare, complete
-from api import payme
+from api import click, payme
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -8,13 +7,13 @@ api_blueprint = Blueprint('api', __name__)
 @api_blueprint.route('/click/prepare', methods=['POST'])
 def prepare():
     request_data = request.get_json()
-    return click_prepare(request_data)
+    return click.prepare(request_data)
 
 
 @api_blueprint.route('/click/complete', methods=['POST'])
 def complete():
     request_data = request.get_json()
-    return complete(request_data)
+    return click.complete(request_data)
 
 
 @api_blueprint.route('/payme/pay', methods=['POST'])

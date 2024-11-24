@@ -8,7 +8,7 @@ from bot.repository.car import *
 from config import UZBEK_LANGUAGE, RUSSIAN_LANGUAGE
 
 
-def add_advertisement(bot, callback):
+def add_advertisement(bot, callback: types.CallbackQuery):
     user = get_user_by_chat_id(callback.message.chat.id)
 
     car = Car(user_id=user.id)
