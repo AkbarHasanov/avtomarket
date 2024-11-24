@@ -33,7 +33,7 @@ class Car(Base):
     payment_type = Column(String)
     additional_options = Column(String)
     phone_number = Column(String)
-    tariff_id = Column(String, ForeignKey('tariffs.id'), nullable=False, )
+    tariff_id = Column(String, ForeignKey('tariffs.id'), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.now())
     payment_status = Column(Enum(PaymentStatus), nullable=False, default=PaymentStatus.PENDING)
 

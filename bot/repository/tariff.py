@@ -1,5 +1,6 @@
 from bot.database.session import db
 from bot.models.tariff import Translation, Tariff
+from const import *
 
 
 def get_tariffs():
@@ -10,10 +11,14 @@ def get_translation(tariff_id, language) -> Translation:
     return db.query(Translation).filter_by(tariff_id=tariff_id, language=language).first()
 
 
+def get_by_callback_data(callback_data):
+    return db.query(Tariff).filter_by(callback_data=callback_data).first()
+
 def init_tariffs():
     db.add_all([
         Tariff(
             amount=49000,
+            callback_data=CALLBACK_DATA_ECONOMIC,
             translations=[
                 Translation(
                     name='Эконом',
@@ -33,6 +38,7 @@ def init_tariffs():
         ),
         Tariff(
             amount=59000,
+            callback_data=CALLBACK_DATA_STANDARD,
             translations=[
                 Translation(
                     name='Стандарт',
@@ -52,6 +58,7 @@ def init_tariffs():
         ),
         Tariff(
             amount=69000,
+            callback_data=CALLBACK_DATA_PREMIUM,
             translations=[
                 Translation(
                     name='Премиум',
@@ -71,6 +78,7 @@ def init_tariffs():
         ),
         Tariff(
             amount=89000,
+            callback_data=CALLBACK_DATA_ELITE,
             translations=[
                 Translation(
                     name='Элитный',
@@ -90,6 +98,7 @@ def init_tariffs():
         ),
         Tariff(
             amount=129000,
+            callback_data=CALLBACK_DATA_EXCLUSIVE,
             translations=[
                 Translation(
                     name='Эксклюзив',
@@ -109,6 +118,7 @@ def init_tariffs():
         ),
         Tariff(
             amount=189000,
+            callback_data=CALLBACK_DATA_EXTREME,
             translations=[
                 Translation(
                     name='Экстрим',

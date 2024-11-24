@@ -14,7 +14,7 @@ from werkzeug.utils import secure_filename
 def register_photo_handlers(bot: TeleBot):
     @bot.message_handler(content_types=['photo'])
     def handle_photo(message):
-        upload_folder = "uploads/"
+        upload_folder = "bot/uploads/"
 
         file_info = bot.get_file(message.photo[-1].file_id)
         file_path = file_info.file_path
@@ -45,7 +45,7 @@ def register_photo_handlers(bot: TeleBot):
             tariffs = get_tariffs()
             for tariff in tariffs:
                 tariff_detail = get_translation(tariff.id, user.language)
-                markup.add(types.InlineKeyboardButton(tariff_detail.name, callback_data=tariff_detail.callback_data))
+                markup.add(types.InlineKeyboardButton(tariff_detail.name, callback_data=tariff.callback_data))
 
                 text = f"""{text}{tariff.amount} - "{tariff_detail.name}" tarifi\n● {tariff_detail.description}\n\n"""
 

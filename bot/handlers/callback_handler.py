@@ -27,3 +27,6 @@ def register_callback_handlers(bot: TeleBot):
 
         elif callback.data == CALLBACK_DATA_CLICK:
             tariff_handler.click_payment(bot, callback)
+
+        elif callback.data == CALLBACK_DATA_PAYME:
+            tariff_handler.payme_payment(bot, callback)

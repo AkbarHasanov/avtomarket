@@ -8,6 +8,8 @@ class Tariff(Base):
 
     id = Column(Integer, primary_key=True)
     amount = Column(Integer)
+    callback_data = Column(String)
+
 
     cars = relationship('Car', back_populates='tariff')
     translations = relationship('Translation', back_populates='tariff')
@@ -23,6 +25,5 @@ class Translation(Base):
     description = Column(String)
     language = Column(String)
     label = Column(String)
-    callback_data = Column(String)
 
     tariff = relationship('Tariff', back_populates='translations')
