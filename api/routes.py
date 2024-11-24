@@ -24,14 +24,16 @@ def payme_payment():
     method = request_data.get('method')
 
     if method == "CheckPerformTransaction":
-        payme.check_perform_transaction(request_data['params'])
+        return payme.check_perform_transaction(request_data['params'])
     elif method == "CreateTransaction":
-        payme.create_transaction(request_data['params'])
+        return payme.create_transaction(request_data['params'])
     elif method == "PerformTransaction":
-        payme.perform_transaction(request_data['params'])
+        return payme.perform_transaction(request_data['params'])
     elif method == "CancelTransaction":
-        payme.cancel_transaction(request_data['params'])
+        return payme.cancel_transaction(request_data['params'])
     elif method == "CheckTransaction":
-        payme.check_transaction(request_data['params'])
+        return payme.check_transaction(request_data['params'])
     elif method == "GetStatement":
-        payme.get_statement(request_data['params'])
+        return payme.get_statement(request_data['params'])
+    else:
+        return "Method not supported"

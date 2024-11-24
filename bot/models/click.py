@@ -1,8 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import relationship
 
 from bot.models.base import Base
-from datetime import datetime
 
 
 class Click(Base):
