@@ -3,8 +3,15 @@ import os
 
 load_dotenv()
 
+
+HOST=os.getenv("HOST")
+PORT=os.getenv("PORT")
+
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+WEBHOOK_URL=os.getenv("WEBHOOK_URL")
+WEBHOOK_PATH=os.getenv("WEBHOOK_PATH")
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 BOT_PAY_TOKEN = os.getenv('BOT_PAY_TOKEN')
 ADMIN_CHAT_ID = os.getenv('ADMIN_CHAT_ID')

@@ -1,8 +1,18 @@
 from flask import Blueprint, request
 from api.click import click_prepare, complete
 from api import payme
+from config import BOT_TOKEN
+import telebot
 
 api_blueprint = Blueprint('api', __name__)
+
+
+@api_blueprint.route(f"/webhook/{BOT_TOKEN}", methods=['POST'])
+def webhook():
+    json_data = request.get_json()
+    if json_data:
+        bot.process_new_updates([telebot.types.Update.de_json(json_data)])
+    return "OK", 200
 
 
 @api_blueprint.route('/click/prepare', methods=['POST'])
