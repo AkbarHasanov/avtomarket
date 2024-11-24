@@ -11,9 +11,9 @@ def check_perform_transaction(request):
     car = get_car_by_id(request['account']['order_id'])
     if car.tariff.amount != request['amount']:
         return jsonify({
-            'result': {
-                'allow': PAYME_ERROR_INVALID_AMOUNT,
-            },
+            'error': {
+                'code': PAYME_ERROR_INVALID_AMOUNT,
+            }
         })
 
     return jsonify({
@@ -35,8 +35,8 @@ def create_transaction(request):
     car = get_car_by_id(request['account']['order_id'])
     if car.tariff.amount != request['amount']:
         return jsonify({
-            'result': {
-                'allow': PAYME_ERROR_INVALID_AMOUNT,
+            'error': {
+                'code': PAYME_ERROR_INVALID_AMOUNT,
             },
         })
 
