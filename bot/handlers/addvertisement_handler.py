@@ -40,8 +40,8 @@ def get_model(message, bot: TeleBot, car: Car, language: str):
     bot.register_next_step_handler(msg, partial(get_price, bot=bot, language=language, car=car))
 
 
-def get_price(message, bot: TeleBot, car: Car, language: str):
-    car.price = int(message.text)
+def get_price(message: types.Message, bot: TeleBot, car: Car, language: str):
+    car.price = message.text
     text = {
         UZBEK_LANGUAGE: "Tana turi:",
         RUSSIAN_LANGUAGE: "Тип кузова:"
@@ -143,7 +143,7 @@ def get_number_of_owners(message, bot: TeleBot, car: Car, language: str):
     car.number_of_owners = message.text
     text = {
         UZBEK_LANGUAGE: 'Aloqa telefon raqami:',
-        RUSSIAN_LANGUAGE: "Qo'shimcha variantlar:"
+        RUSSIAN_LANGUAGE: "Телефон для связи:"
     }
 
     msg = bot.send_message(message.chat.id, text=text[language])

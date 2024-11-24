@@ -15,11 +15,11 @@ def update_tariff(car: Car, tariff: str):
 
 
 def get_last_car_by_user_id(user_id: str) -> Car:
-    return db.query(Car).filter(Car.user_id == user_id).order_by(Car.created_at.desc()).one_or_none()
+    return db.query(Car).filter(Car.user_id == user_id).order_by(Car.created_at.desc()).limit(1).one_or_none()
 
 
 def get_car_by_id(car_id: str) -> Car:
-    return db.query(Car).filter(Car.id == car_id).order_by(Car.created_at.desc()).one_or_none()
+    return db.query(Car).filter(Car.id == car_id).order_by(Car.created_at.desc()).limit(1).one_or_none()
 
 
 def add_car_photo(car_id, photo_path: str):
