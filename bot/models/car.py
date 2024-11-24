@@ -1,5 +1,4 @@
 import enum
-from enum import EnumType
 
 from sqlalchemy import Column, Integer, ForeignKey, String, DateTime, Enum
 from sqlalchemy.orm import relationship
