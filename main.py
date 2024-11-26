@@ -2,8 +2,10 @@ from config import *
 from bot.database.session import engine
 from bot.models.base import Base
 from bot.repository.tariff import get_tariffs, init_tariffs
-from bot.webhook import app
+from api.app import create_app
 from bot.bot import bot
+
+app = create_app()
 
 # Initialize Database
 Base.metadata.create_all(bind=engine)

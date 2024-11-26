@@ -1,5 +1,8 @@
 from flask import Blueprint, request
 from api import click, payme
+from telebot import types
+from config import WEBHOOK_PATH
+from bot.bot import bot
 
 api_blueprint = Blueprint('api', __name__)
 
@@ -36,3 +39,15 @@ def payme_payment():
         return payme.get_statement(request_data['params'])
     else:
         return "Method not supported"
+
+
+@api_blueprint.route(WEBHOOK_PATH, methods=['POST'])
+def webhook():
+    """
+    Telegram sends updates to this endpoint. The bot processes the updates.
+    """
+    json_data = request.get_json()
+    if json_data:
+        update = types.Update.de_json(json_data)
+        bot.process_new_updates([update])
+    return "", 200
