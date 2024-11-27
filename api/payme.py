@@ -16,6 +16,7 @@ def check_perform_transaction(request):
         return jsonify({
             'error': {
                 'code': PAYME_ERROR_INVALID_AMOUNT,
+                'message': 'Invalid amount',
             }
         })
 
@@ -40,6 +41,7 @@ def create_transaction(request):
         return jsonify({
             'error': {
                 'code': PAYME_ERROR_INVALID_AMOUNT,
+                'message': 'Invalid amount',
             },
         })
 
