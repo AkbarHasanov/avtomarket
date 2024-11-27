@@ -7,7 +7,6 @@ from bot.repository.tariff import get_translation
 from bot.repository.user import *
 from bot.repository.car import *
 from config import *
-from bot.bot import bot as b
 
 
 def click_payment(bot, callback):
@@ -55,9 +54,8 @@ def payme_payment(bot, callback):
     )
 
 
-def send_payment_success_message(car: Car):
+def send_payment_success_message(bot, car: Car):
     user = get(car.user_id)
-    bot = b
 
     tariff_detail = get_translation(car.tariff_id, user.language)
     bot.send_message(ADMIN_CHAT_ID,

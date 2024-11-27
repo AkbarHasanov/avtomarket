@@ -5,6 +5,8 @@ from bot.repository.car import get_car_by_id, update_status
 from bot.models.click import Click
 from bot.models.car import PaymentStatus
 from bot.repository.click import create
+from bot.bot import bot
+from bot.handlers.payment_handler import send_payment_success_message
 from const import *
 
 
@@ -142,7 +144,7 @@ def complete(request_data):
 
     update_status(car, PaymentStatus.PAID)
 
-
+    send_payment_success_message(bot, car)
 
 
     return jsonify({

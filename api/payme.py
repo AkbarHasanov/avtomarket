@@ -1,8 +1,11 @@
 from flask import jsonify
 from const import *
-from bot.repository.car import get_car_by_id
+from bot.repository.car import get_car_by_id, update_status
 from bot.repository import payme
 from bot.models.payme import Payme
+from bot.models.car import PaymentStatus
+from bot.bot import bot
+from bot.handlers.payment_handler import send_payment_success_message
 
 
 def check_perform_transaction(request):
@@ -54,6 +57,10 @@ def create_transaction(request):
 def perform_transaction(request):
     transaction_id = request['id']
     transaction = payme.perform(transaction_id)
+
+    car = get_car_by_id(transaction.order_id)
+    update_status(car, PaymentStatus.PAID)
+    send_payment_success_message(bot, car)
 
     return jsonify({
         "result": {
