@@ -14,7 +14,7 @@ def click_payment(bot, callback):
     car = get_last_car_by_user_id(user.id)
     tariff_detail = get_translation(car.tariff_id, user.language)
 
-    url = f"""https://my.click.uz/services/pay?service_id={CLICK_SERVICE_ID}&merchant_id={CLICK_MERCHANT_ID}&amount={car.tariff.amount * 100}&transaction_param={car.id}&return_url={RETURN_URL}"""
+    url = f"""https://my.click.uz/services/pay?service_id={CLICK_SERVICE_ID}&merchant_id={CLICK_MERCHANT_ID}&amount={car.tariff.amount}&transaction_param={car.id}&return_url={RETURN_URL}"""
 
     markup = types.InlineKeyboardMarkup()
     payment_button = types.InlineKeyboardButton(
