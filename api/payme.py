@@ -12,6 +12,13 @@ def check_perform_transaction(request):
     print(request)
 
     car = get_car_by_id(request['account']['order_id'])
+    if car is None:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'message': "Order not found",
+            }
+        })
     if car.tariff.amount != request['amount']:
         return jsonify({
             'error': {
@@ -37,6 +44,13 @@ def create_transaction(request):
     payme_transaction.state = 1
 
     car = get_car_by_id(request['account']['order_id'])
+    if car is None:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'message': "Order not found",
+            }
+        })
     if car.tariff.amount != request['amount']:
         return jsonify({
             'error': {
@@ -61,6 +75,13 @@ def perform_transaction(request):
     transaction = payme.perform(transaction_id)
 
     car = get_car_by_id(transaction.order_id)
+    if car is None:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'message': "Order not found",
+            }
+        })
     update_status(car, PaymentStatus.PAID)
     send_payment_success_message(bot, car)
 
