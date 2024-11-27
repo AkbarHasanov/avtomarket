@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from api import click, payme
 from telebot import types
-from config import WEBHOOK_PATH
+from config import WEBHOOK_PATH, PAYME_KEY
 from bot.bot import bot
 
 api_blueprint = Blueprint('api', __name__)
@@ -21,6 +21,9 @@ def complete():
 
 @api_blueprint.route('/payme/pay', methods=['POST'])
 def payme_payment():
+    if request.headers.get("Authorization") != f"Basic {PAYME_KEY}":
+        return "Unathorized", 401
+
     request_data = request.get_json()
 
     method = request_data.get('method')

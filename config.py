@@ -22,6 +22,7 @@ CLICK_SECRET_KEY = os.getenv('CLICK_SECRET_KEY')
 
 PAYME_URI = os.getenv('PAYME_URI')
 PAYME_MERCHANT_ID = os.getenv('PAYME_MERCHANT_ID')
+PAYME_KEY = os.getenv('PAYME_KEY', '')
 
 RETURN_URL = os.getenv('RETURN_URL')
 
