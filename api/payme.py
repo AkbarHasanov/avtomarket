@@ -126,7 +126,7 @@ def perform_transaction(request):
             })
         return jsonify({
             "result": {
-                "transaction": transaction.id,
+                "transaction": transaction.transaction_id,
                 "perform_time": transaction.perform_time,
                 "state": 2
             }
@@ -167,7 +167,7 @@ def perform_transaction(request):
 
     return jsonify({
         "result": {
-            "transaction": transaction.id,
+            "transaction": transaction.transaction_id,
             "perform_time": transaction.perform_time,
             "state": 2
         }
@@ -190,7 +190,7 @@ def cancel_transaction(request):
 
     return jsonify({
         "result": {
-            "transaction": transaction.id,
+            "transaction": transaction.transaction_id,
             "cancel_time": transaction.cancel_time,
             "state": -2
         }
@@ -241,7 +241,7 @@ def get_statement(request):
             "create_time": transaction.create_time,
             "perform_time": transaction.perform_time,
             "cancel_time": transaction.cancel_time,
-            "transaction": transaction.id,
+            "transaction": transaction.transaction_id,
             "state": transaction.state,
             "reason": transaction.reason,
         })
