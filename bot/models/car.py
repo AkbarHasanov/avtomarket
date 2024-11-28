@@ -9,6 +9,7 @@ import datetime
 # Define an Enum for status
 class PaymentStatus(enum.Enum):
     PENDING = "pending"
+    IN_PROGRESS = "in_progress" 
     PAID = "paid"
 
 

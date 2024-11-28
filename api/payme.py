@@ -92,7 +92,16 @@ def create_transaction(request):
             },
         })
 
+    if car.payment_status != PaymentStatus.PENDING:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_ORDER_NOT_FOUND,
+                'message': "Payment in progress",
+            }
+        })
+
     payme_transaction = payme.create(payme_transaction)
+    update_status(car, PaymentStatus.IN_PROGRESS)
 
     return jsonify({
         "result": {
