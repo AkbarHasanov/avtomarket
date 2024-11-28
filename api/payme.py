@@ -26,12 +26,12 @@ def _check_perform_transaction(request):
             }
         }
     if car.payment_status != PaymentStatus.PENDING:
-        return jsonify({
+        return {
             'error': {
                 'code': PAYME_ERROR_ORDER_NOT_FOUND,
                 'message': "Payment in progress",
             }
-        })
+        }
 
     return {
         'result': {
