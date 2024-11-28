@@ -177,11 +177,10 @@ def perform_transaction(request):
 def cancel_transaction(request):
     transaction_id = request['id']
     try:
-        transaction = payme.cancel(transaction_id)
+        transaction = payme.cancel(transaction_id, request['reason'])
         if transaction is None:
             raise ValueError('transaction error')
     except Exception as e:
-        raise e
         return jsonify({
             'error': {
                 'code': PAYME_ERROR_COULD_NOT_CANCEL,
