@@ -209,21 +209,16 @@ def check_transaction(request):
             }
         })
     
-    result = {
-        "create_time": transaction.create_time,
-        "transaction": transaction.transaction_id,
-        "state": transaction.state,
-    }
-
-    if transaction.perform_time:
-        result['perform_time'] = transaction.perform_time
-    if transaction.cancel_time:
-        result['cancel_time'] = transaction.cancel_time
-        result['reason'] = transaction.reason
-
 
     return jsonify({
-        "result": result,
+        "result": {
+            "create_time": transaction.create_time or 0,
+            "perform_time": transaction.perform_time or 0,
+            "cancel_time": transaction.cancel_time or 0,
+            "transaction": transaction.transaction_id,
+            "state": transaction.state,
+            "reason": transaction.reason,
+        }
     })
 
 
