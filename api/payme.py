@@ -25,6 +25,14 @@ def _check_perform_transaction(request):
                 'message': 'Invalid amount',
             }
         }
+    if car.payment_status != PaymentStatus.PENDING:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_ORDER_NOT_FOUND,
+                'message': "Payment in progress",
+            }
+        })
+
     return {
         'result': {
             'allow': True,
@@ -82,21 +90,6 @@ def create_transaction(request):
             'error': {
                 'code': PAYME_ERROR_ORDER_NOT_FOUND,
                 'message': "Order not found",
-            }
-        })
-    if car.tariff.amount != request['amount']:
-        return jsonify({
-            'error': {
-                'code': PAYME_ERROR_INVALID_AMOUNT,
-                'message': 'Invalid amount',
-            },
-        })
-
-    if car.payment_status != PaymentStatus.PENDING:
-        return jsonify({
-            'error': {
-                'code': PAYME_ERROR_ORDER_NOT_FOUND,
-                'message': "Payment in progress",
             }
         })
 
@@ -213,7 +206,7 @@ def check_transaction(request):
     except:
         return jsonify({
             'error': {
-                'code': PAYME_ERROR_ORDER_NOT_FOUND,
+                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
                 'message': "transaction not found",
             }
         })
