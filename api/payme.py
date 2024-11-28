@@ -129,9 +129,9 @@ def cancel_transaction(request):
 
 
 def check_transaction(request):
-    transaction_id = request['params']['id']
+    transaction_id = request['id']
     try:
-        transaction = payme.get(transaction_id)
+        transaction = payme.get_by_transaction_id(transaction_id)
         if transaction is None:
             raise ValueError("transaction not found")
     except:
