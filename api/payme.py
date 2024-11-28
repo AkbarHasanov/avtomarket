@@ -72,7 +72,18 @@ def create_transaction(request):
 
 def perform_transaction(request):
     transaction_id = request['id']
-    transaction = payme.perform(transaction_id)
+    try:
+        transaction = payme.perform(transaction_id)
+        if transaction is None:
+            raise ValueError("not found")
+    except:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_COULD_NOT_PERFORM,
+                'message': 'Could not perform'
+            }
+        })
+        
 
     car = get_car_by_id(transaction.order_id)
     if car is None:
@@ -96,7 +107,17 @@ def perform_transaction(request):
 
 def cancel_transaction(request):
     transaction_id = request['id']
-    transaction = payme.cancel(transaction_id)
+    try:
+        transaction = payme.cancel(transaction_id)
+        if transaction is None:
+            raise ValueError('transaction error')
+    except:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_COULD_NOT_CANCEL,
+                'message': "Could not cancel"
+            }
+        })
 
     return jsonify({
         "result": {
@@ -109,7 +130,17 @@ def cancel_transaction(request):
 
 def check_transaction(request):
     transaction_id = request['id']
-    transaction = payme.get(transaction_id)
+    try:
+        transaction = payme.get(transaction_id)
+        if transaction is None:
+            raise ValueError("transaction not found")
+    except:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'message': "transaction not found",
+            }
+        })
 
     return jsonify({
         "result": {
