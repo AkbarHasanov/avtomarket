@@ -30,7 +30,7 @@ def perform(transaction_id: int) -> Payme:
 
 def cancel(transaction_id: int, reason: int, state: int = -2):
     db.query(Payme).filter(Payme.transaction_id == transaction_id).update(
-        {"state": -2, "cancelled_at": int(datetime.now().timestamp()*1000), "reason": reason})
+        {"state": -2, "cancel_time": int(datetime.now().timestamp()*1000), "reason": reason})
 
     db.commit()
     return get_by_transaction_id(transaction_id)
