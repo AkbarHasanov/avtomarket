@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import jsonify
 from const import *
 from bot.repository.car import get_car_by_id, update_status
@@ -8,33 +9,65 @@ from bot.bot import bot
 from bot.handlers.payment_handler import send_payment_success_message
 
 
-def check_perform_transaction(request):
-    print(request)
-
+def _check_perform_transaction(request):
     car = get_car_by_id(request['account']['order_id'])
     if car is None:
-        return jsonify({
+        return {
             'error': {
-                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'code': PAYME_ERROR_ORDER_NOT_FOUND,
                 'message': "Order not found",
             }
-        })
+        }
     if car.tariff.amount != request['amount']:
-        return jsonify({
+        return {
             'error': {
                 'code': PAYME_ERROR_INVALID_AMOUNT,
                 'message': 'Invalid amount',
             }
-        })
-
-    return jsonify({
+        }
+    return {
         'result': {
             'allow': True,
         },
+    }
+
+def check_perform_transaction(request):
+    return jsonify(_check_perform_transaction(request))
+
+def check(transaction: Payme):
+    if transaction.state != 1:
+        return jsonify({
+            'error': {
+                'code': -31008,
+                'message': 'State != 1'
+            }
+        })
+    
+    if datetime.now().timestamp() * 1000 - transaction.create_time >= 1000*3600:
+        payme.cancel(transaction.id, 4, -1)
+
+    return jsonify({
+        "result": {
+            "create_time": transaction.create_time,
+            "transaction": transaction.transaction_id,
+            "state": 1
+        }
     })
 
 
+
 def create_transaction(request):
+    old_transaction = payme.get_by_transaction_id(request['id'])
+
+    if old_transaction is not None:
+        return check(old_transaction)
+    
+    response = _check_perform_transaction(request)
+
+    if response.get('error') is not None:
+        return jsonify(response)
+
+
     payme_transaction = Payme()
     payme_transaction.transaction_id = request['id']
     payme_transaction.created_at_payme = request['time']
@@ -47,7 +80,7 @@ def create_transaction(request):
     if car is None:
         return jsonify({
             'error': {
-                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'code': PAYME_ERROR_ORDER_NOT_FOUND,
                 'message': "Order not found",
             }
         })
@@ -64,7 +97,7 @@ def create_transaction(request):
     return jsonify({
         "result": {
             "create_time": payme_transaction.create_time,
-            "transaction": payme_transaction.id,
+            "transaction": payme_transaction.transaction_id,
             "state": 1
         }
     })
@@ -72,6 +105,40 @@ def create_transaction(request):
 
 def perform_transaction(request):
     transaction_id = request['id']
+    transaction = payme.get_by_transaction_id(transaction_id)
+    if transaction is None:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'message': 'Transaction not found'
+            }
+        })
+
+    if transaction.state != 1:
+        if transaction.state != 2:
+            return jsonify({
+                'error': {
+                    'code': PAYME_ERROR_COULD_NOT_PERFORM,
+                    'message': 'Transaction cancelled'
+                }
+            })
+        return jsonify({
+            "result": {
+                "transaction": transaction.id,
+                "perform_time": transaction.perform_time,
+                "state": 2
+            }
+        })
+
+    if datetime.now().timestamp() * 1000 - transaction.create_time > 1000 * 3600:
+        payme.cancel(transaction_id, 4, -1)
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_COULD_NOT_PERFORM,
+                'message': "Transaction expired",
+            }
+        })
+
     try:
         transaction = payme.perform(transaction_id)
         if transaction is None:
@@ -79,8 +146,8 @@ def perform_transaction(request):
     except:
         return jsonify({
             'error': {
-                'code': PAYME_ERROR_COULD_NOT_PERFORM,
-                'message': 'Could not perform'
+                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'message': 'Transaction not found'
             }
         })
         
@@ -89,7 +156,7 @@ def perform_transaction(request):
     if car is None:
         return jsonify({
             'error': {
-                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'code': PAYME_ERROR_ORDER_NOT_FOUND,
                 'message': "Order not found",
             }
         })
@@ -137,7 +204,7 @@ def check_transaction(request):
     except:
         return jsonify({
             'error': {
-                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'code': PAYME_ERROR_ORDER_NOT_FOUND,
                 'message': "transaction not found",
             }
         })
