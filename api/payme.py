@@ -208,16 +208,22 @@ def check_transaction(request):
                 'message': "transaction not found",
             }
         })
+    
+    result = {
+        "create_time": transaction.create_time,
+        "transaction": transaction.transaction_id,
+        "state": transaction.state,
+    }
+
+    if transaction.perform_time:
+        result['perform_time'] = transaction.perform_time
+    if transaction.cancel_time:
+        result['cancel_time'] = transaction.cancel_time
+        result['reason'] = transaction.reason
+
 
     return jsonify({
-        "result": {
-            "create_time": transaction.create_time,
-            "perform_time": transaction.perform_time,
-            "cancel_time": transaction.cancel_time,
-            "transaction": transaction.transaction_id,
-            "state": transaction.state,
-            "reason": transaction.reason,
-        }
+        "result": result,
     })
 
 
