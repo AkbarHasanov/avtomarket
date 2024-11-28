@@ -1,6 +1,6 @@
 import base64
 
-from telebot import types
+from telebot import types, TeleBot
 
 from bot.repository.tariff import get_translation
 
@@ -54,7 +54,7 @@ def payme_payment(bot, callback):
     )
 
 
-def send_payment_success_message(bot, car: Car):
+def send_payment_success_message(bot: TeleBot, car: Car):
     user = get(car.user_id)
 
     tariff_detail = get_translation(car.tariff_id, user.language)
@@ -82,7 +82,7 @@ def send_payment_success_message(bot, car: Car):
             ▪️Город: {car.city}
             ▪️Вид оплаты: {car.payment_type}"""
 
-        photos.append(types.InputMediaPhoto(photo.path, caption=caption))
+        photos.append(types.InputMediaPhoto(types.InputFile(photo.path), caption=caption))
 
     bot.send_media_group(ADMIN_CHAT_ID, media=photos)
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
