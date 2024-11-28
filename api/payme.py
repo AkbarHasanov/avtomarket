@@ -187,6 +187,9 @@ def cancel_transaction(request):
                 'message': "Could not cancel"
             }
         })
+    
+    car = get_car_by_id(transaction.order_id)
+    update_status(car, PaymentStatus.PENDING)
 
     return jsonify({
         "result": {
