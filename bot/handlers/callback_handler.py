@@ -1,11 +1,11 @@
-from telebot import TeleBot
+from telebot import TeleBot, types
 from const import *
 from . import language_handler, question_handler, addvertisement_handler, tariff_handler, payment_handler
 
 
 def register_callback_handlers(bot: TeleBot):
     @bot.callback_query_handler(func=lambda callback: callback.data)
-    def check_callback_data(callback):
+    def check_callback_data(callback: types.CallbackQuery):
         if callback.data == CALLBACK_DATA_RU:
             language_handler.handle_russian(bot, callback)
 
@@ -30,3 +30,5 @@ def register_callback_handlers(bot: TeleBot):
 
         elif callback.data == CALLBACK_DATA_PAYME:
             payment_handler.payme_payment(bot, callback)
+
+        bot.answer_callback_query(callback.id)

@@ -129,7 +129,7 @@ def cancel_transaction(request):
 
 
 def check_transaction(request):
-    transaction_id = request['id']
+    transaction_id = request['params']['id']
     try:
         transaction = payme.get(transaction_id)
         if transaction is None:

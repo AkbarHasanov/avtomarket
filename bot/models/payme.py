@@ -12,7 +12,7 @@ class Payme(Base):
     transaction_id = Column(String, nullable=False)
     created_at_payme = Column(Integer, nullable=False, default=int(datetime.now().timestamp()))
     order_id = Column(String, nullable=False)
-    create_time = Column(Integer, nullable=False, default=int(datetime.now().timestamp()))
+    create_time = Column(Integer, nullable=False, default=int(datetime.now().timestamp()*1000))
     state = Column(Integer, nullable=False, default=0)
     perform_time = Column(Integer, nullable=True)
     cancel_time = Column(Integer, nullable=True)
