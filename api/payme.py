@@ -176,6 +176,32 @@ def perform_transaction(request):
 
 def cancel_transaction(request):
     transaction_id = request['id']
+    transaction = payme.get_by_transaction_id(transaction_id)
+    if transaction is None:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_TRANSACTION_NOT_FOUND,
+                'message': 'Transaction not found',
+            }
+        })
+
+    if transaction.state == 2:
+        return jsonify({
+            'error': {
+                'code': PAYME_ERROR_COULD_NOT_CANCEL,
+                'message': 'Could not cancel',
+            }
+        })
+
+    if transaction.state != 1:
+        return jsonify({
+            'result': {
+                'state': transaction.state,
+                'cancel_time': transaction.cancel_time,
+                'transaction': transaction.transaction_id,
+            }
+        })
+
     try:
         transaction = payme.cancel(transaction_id, request['reason'])
         if transaction is None:
