@@ -195,7 +195,7 @@ def cancel_transaction(request):
         "result": {
             "transaction": transaction.transaction_id,
             "cancel_time": transaction.cancel_time,
-            "state": -2
+            "state": transaction.state,
         }
     })
 
