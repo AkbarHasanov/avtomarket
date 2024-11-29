@@ -18,7 +18,7 @@ def _check_perform_transaction(request):
                 'message': "Order not found",
             }
         }
-    if car.tariff.amount != request['amount']:
+    if car.tariff.amount * 100 != request['amount']:
         return {
             'error': {
                 'code': PAYME_ERROR_INVALID_AMOUNT,

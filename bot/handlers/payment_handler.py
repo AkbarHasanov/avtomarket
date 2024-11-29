@@ -36,7 +36,7 @@ def payme_payment(bot, callback):
     car = get_last_car_by_user_id(user.id)
     tariff_detail = get_translation(car.tariff_id, user.language)
 
-    request_data = f"m={PAYME_MERCHANT_ID};ac.order_id={car.id};a={car.tariff.amount};l=uz;c={RETURN_URL};ct=1000;cr=UZS"
+    request_data = f"m={PAYME_MERCHANT_ID};ac.order_id={car.id};a={car.tariff.amount*100};l=uz;c={RETURN_URL};ct=1000;cr=UZS"
     data_bytes = request_data.encode('utf-8')
     base64_encoded = base64.b64encode(data_bytes).decode('utf-8')
     url = f"""{PAYME_URI}/{base64_encoded}"""
