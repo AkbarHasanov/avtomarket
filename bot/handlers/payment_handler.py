@@ -7,7 +7,7 @@ from bot.repository.tariff import get_translation
 from bot.repository.user import *
 from bot.repository.car import *
 from config import *
-from language_handler import handle_russian, handle_uzbek
+from bot.handlers.language_handler import handle_russian, handle_uzbek
 
 
 def click_payment(bot, callback):
