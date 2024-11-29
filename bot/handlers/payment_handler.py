@@ -7,6 +7,7 @@ from bot.repository.tariff import get_translation
 from bot.repository.user import *
 from bot.repository.car import *
 from config import *
+from language_handler import handle_russian, handle_uzbek
 
 
 def click_payment(bot, callback):
@@ -85,15 +86,14 @@ def send_payment_success_message(bot: TeleBot, car: Car):
         photos.append(types.InputMediaPhoto(types.InputFile(photo.path), caption=caption))
 
     bot.send_media_group(ADMIN_CHAT_ID, media=photos)
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-    btn1 = types.KeyboardButton("Сообщить о продаже машины 🚘")
-    btn2 = types.KeyboardButton("Дать рекламное обьявление 🛍")
-    btn3 = types.KeyboardButton("Нужна помощь с другим вопросом ❓")
-    markup.add(btn1, btn2, btn3)
     bot.send_message(user.chat_id,
-                     """Спасибо за доверие! Ваше объявление о продаже автомобиля будет опубликовано в кратчайшие сроки.
-                     
-                     Пожалуйста, сообщите нам после продажи автомобиля 🙏🏻
-                     
-                     Если ваш пост не будет опубликован в течении 24 часов, прошу связаться с Админом.""",
-                     reply_markup=markup)
+                     "Спасибо за доверие! Ваше объявление о продаже автомобиля будет опубликовано в кратчайшие сроки."+
+                     ""
+                     "Пожалуйста, сообщите нам после продажи автомобиля 🙏🏻"
+                     ""
+                     "Если ваш пост не будет опубликован в течении 24 часов, прошу связаться с Админом.",)
+
+    if user.language == RUSSIAN_LANGUAGE:
+        handle_russian(bot, None, user.chat_id)
+    else:
+        handle_uzbek(bot, None, user.chat_id)
