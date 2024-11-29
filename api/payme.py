@@ -267,9 +267,9 @@ def get_statement(request):
             "account": {
                 "order_id": transaction.order_id,
             },
-            "create_time": transaction.create_time,
-            "perform_time": transaction.perform_time,
-            "cancel_time": transaction.cancel_time,
+            "create_time": transaction.create_time or 0,
+            "perform_time": transaction.perform_time or 0,
+            "cancel_time": transaction.cancel_time or 0,
             "transaction": transaction.transaction_id,
             "state": transaction.state,
             "reason": transaction.reason,
