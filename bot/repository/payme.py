@@ -1,10 +1,11 @@
 from datetime import datetime
 
 from bot.models.payme import Payme
-from bot.database.session import db
+from bot.database.session import get_db
 
 
 def create(transaction: Payme) -> Payme:
+    db = next(get_db())
     db.add(transaction)
     db.commit()
     db.refresh(transaction)
@@ -13,14 +14,17 @@ def create(transaction: Payme) -> Payme:
 
 
 def get(transaction_id: int):
+    db = next(get_db())
     return db.query(Payme).filter(Payme.id == transaction_id).first()
 
 
 def get_by_transaction_id(transaction_id: int):
+    db = next(get_db())
     return db.query(Payme).filter(Payme.transaction_id == transaction_id).first()
 
 
 def perform(transaction_id: int) -> Payme:
+    db = next(get_db())
     db.query(Payme).filter(Payme.transaction_id == transaction_id).update(
         {"state": 2, "perform_time": int(datetime.now().timestamp()*1000)})
 
@@ -29,6 +33,7 @@ def perform(transaction_id: int) -> Payme:
 
 
 def cancel(transaction_id: int, reason: int, state: int = -1):
+    db = next(get_db())
     db.query(Payme).filter(Payme.transaction_id == transaction_id).update(
         {"state": state, "cancel_time": int(datetime.now().timestamp()*1000), "reason": reason})
 
@@ -37,4 +42,5 @@ def cancel(transaction_id: int, reason: int, state: int = -1):
 
 
 def get_all(from_time: int, to_time: int):
+    db = next(get_db())
     return db.query(Payme).filter(Payme.create_time >= from_time, Payme.create_time <= to_time).all()

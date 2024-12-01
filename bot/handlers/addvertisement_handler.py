@@ -216,6 +216,7 @@ def add_advertisement(bot, callback: types.CallbackQuery):
     user = get_user_by_chat_id(callback.message.chat.id)
 
     car = Car(user_id=user.id)
+    create_car(car)
 
     text = {
         UZBEK_LANGUAGE: "Sotish haqida e'lon qilish uchun mashina haqida bosqichma-bosqich anketani to'ldiring 🚘.",
@@ -235,6 +236,7 @@ def add_advertisement(bot, callback: types.CallbackQuery):
 
 def get_model(message, bot: TeleBot, car: Car, language: str):
     car.model = message.text
+    set_model(car.id, message.text)
 
     text = {
         UZBEK_LANGUAGE: "Narxi:",
@@ -246,8 +248,7 @@ def get_model(message, bot: TeleBot, car: Car, language: str):
 
 def get_price(message: types.Message, bot: TeleBot, car: Car, language: str):
     car.price = message.text
-
-    create_car(car)
+    set_price(car.id, message.text)
 
     markup = types.InlineKeyboardMarkup()
     markup.add(types.InlineKeyboardButton(body_type[CALLBACK_DATA_BODY_TYPE_SEDAN][language],
@@ -274,8 +275,7 @@ def get_price(message: types.Message, bot: TeleBot, car: Car, language: str):
 
 def get_body_type(message, bot: TeleBot, car: Car, language: str):
     car.body_type = message.text
-
-    update(car)
+    set_body_type(car.id, message.text)
 
     text = {
         UZBEK_LANGUAGE: 'Kilometr:',
@@ -288,15 +288,16 @@ def get_body_type(message, bot: TeleBot, car: Car, language: str):
 
 def get_mileage(message, bot: TeleBot, car: Car, language: str):
     car.mileage = message.text
-
-    update(car)
+    set_mileage(car.id, message.text)
 
     markup = types.InlineKeyboardMarkup()
     automatic = types.InlineKeyboardButton(gearbox_type[CALLBACK_DATA_GEARBOX_TYPE_AUTOMATIC][language],
                                            callback_data=CALLBACK_DATA_GEARBOX_TYPE_AUTOMATIC)
-    mechanical = types.InlineKeyboardButton(gearbox_type[CALLBACK_DATA_GEARBOX_TYPE_OTHER][language],
-                                            callback_data=CALLBACK_DATA_GEARBOX_TYPE_OTHER)
-    markup.add(automatic, mechanical)
+    mechanical = types.InlineKeyboardButton(gearbox_type[CALLBACK_DATA_GEARBOX_TYPE_MECHANICAL][language],
+                                            callback_data=CALLBACK_DATA_GEARBOX_TYPE_MECHANICAL)
+    other = types.InlineKeyboardButton(gearbox_type[CALLBACK_DATA_GEARBOX_TYPE_OTHER][language],
+                                       callback_data=CALLBACK_DATA_GEARBOX_TYPE_OTHER)
+    markup.add(automatic, mechanical, other)
 
     text = {
         UZBEK_LANGUAGE: 'Uzatmalar qutisi:',
@@ -308,6 +309,8 @@ def get_mileage(message, bot: TeleBot, car: Car, language: str):
 
 def get_gearbox_type(message, bot: TeleBot, car: Car, language: str):
     car.gearbox_type = message.text
+    set_gearbox_type(car.id, message.text)
+
     text = {
         UZBEK_LANGUAGE: 'Chiqarilgan yili:',
         RUSSIAN_LANGUAGE: "Год выпуска:"
@@ -319,7 +322,7 @@ def get_gearbox_type(message, bot: TeleBot, car: Car, language: str):
 
 def get_issue_year(message, bot: TeleBot, car: Car, language: str):
     car.issue_year = message.text
-    update(car)
+    set_issue_year(car.id, message.text)
 
     markup = types.InlineKeyboardMarkup()
     black = types.InlineKeyboardButton(color[CALLBACK_DATA_COLOR_BLACK][language],
@@ -358,7 +361,7 @@ def get_issue_year(message, bot: TeleBot, car: Car, language: str):
 
 def get_color(message, bot: TeleBot, car: Car, language: str):
     car.color = message.text
-    update(car)
+    set_color(car.id, message.text)
 
     text = {
         UZBEK_LANGUAGE: 'Dvigatel hajmi:',
@@ -371,7 +374,7 @@ def get_color(message, bot: TeleBot, car: Car, language: str):
 
 def get_engine_capacity(message, bot: TeleBot, car: Car, language: str):
     car.engine_capacity = message.text
-    update(car)
+    set_engine_capacity(car.id, message.text)
 
     markup = types.InlineKeyboardMarkup()
     petrol = types.InlineKeyboardButton(fuel_type[CALLBACK_DATA_FUEL_TYPE_PETROL][language],
@@ -397,6 +400,8 @@ def get_engine_capacity(message, bot: TeleBot, car: Car, language: str):
 
 def get_number_of_owners(message, bot: TeleBot, car: Car, language: str):
     car.number_of_owners = message.text
+    set_number_of_owners(car.id, message.text)
+
     text = {
         UZBEK_LANGUAGE: 'Aloqa telefon raqami:',
         RUSSIAN_LANGUAGE: "Телефон для связи:"
@@ -408,7 +413,7 @@ def get_number_of_owners(message, bot: TeleBot, car: Car, language: str):
 
 def get_phone_number(message, bot: TeleBot, car: Car, language: str):
     car.phone_number = message.text
-    update(car)
+    set_phone_number(car.id, message.text)
 
     markup = types.InlineKeyboardMarkup()
     tashkent = types.InlineKeyboardButton(city[CALLBACK_DATA_CITY_TASHKENT][language],
@@ -434,7 +439,7 @@ def get_phone_number(message, bot: TeleBot, car: Car, language: str):
 
 def get_city(message, bot: TeleBot, car: Car, language: str):
     car.city = message.text
-    update(car)
+    set_city(car.id, message.text)
 
     markup = types.InlineKeyboardMarkup()
     cash = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_CASH][user.language],
@@ -459,7 +464,7 @@ def get_city(message, bot: TeleBot, car: Car, language: str):
 
 def get_payment_type(message, bot: TeleBot, car: Car, language: str):
     car.payment_type = message.text
-    update(car)
+    set_payment_type(car.id, message.text)
 
     text = {
         UZBEK_LANGUAGE: "Qo'shimcha variantlar:",
@@ -472,47 +477,47 @@ def get_payment_type(message, bot: TeleBot, car: Car, language: str):
 
 def get_additional_options(message, bot: TeleBot, car: Car, language: str):
     car.additional_options = message.text
-    update(car)
+    set_additional_options(car.id, message.text)
 
     text = {
         UZBEK_LANGUAGE: f"""🔥{car.model}-{car.price}🔥
+
+▪️Avtomobil modeli va markasi: {car.model}
+▪️Narxi: {car.price}
+▪️Kuzov turi: {car.body_type}
+▪️Ishlab chiqarilgan yili: {car.issue_year}
+▪️️Yurgan masofasi: {car.mileage}
+▪️Uzatmalar qutisi: {car.gearbox_type}
+▪️Rang: {car.color}
+▪️Dvigatel hajmi: {car.engine_capacity}
+▪️Yoqilg'i turi: {car.fuel_type}
+▪️Avtomobil holati: {car.machine_condition}
+▪️Egalari soni: {car.number_of_owners}
+▪️Shahar: {car.city}
+▪️To'lov turi: {car.payment_type}
+▪️Aloqa telefon raqami: {car.phone_number}
         
-        ▪️Avtomobil modeli va markasi: {car.model}
-        ▪️Narxi: {car.price}
-        ▪️Kuzov turi: {car.body_type}
-        ▪️Ishlab chiqarilgan yili: {car.issue_year}
-        ▪️️Yurgan masofasi: {car.mileage}
-        ▪️Uzatmalar qutisi: {car.gearbox_type}
-        ▪️Rang: {car.color}
-        ▪️Dvigatel hajmi: {car.engine_capacity}
-        ▪️Yoqilg'i turi: {car.fuel_type}
-        ▪️Avtomobil holati: {car.machine_condition}
-        ▪️Egalari soni: {car.number_of_owners}
-        ▪️Shahar: {car.city}
-        ▪️To'lov turi: {car.payment_type}
-        ▪️Aloqa telefon raqami: {car.phone_number}
         
-        
-        ▪️Qo'shimcha variantlar: {car.additional_options}""",
+▪️Qo'shimcha variantlar: {car.additional_options}""",
         RUSSIAN_LANGUAGE: f"""🔥{car.model}-{car.price}🔥
+
+▪️Модель и марка машины: {car.model}
+▪️Цена: {car.price}
+▪️Тип кузова: {car.body_type}
+▪️Год выпуска: {car.issue_year}
+▪️Пробег: {car.mileage}
+▪️Тип коробки передач: {car.gearbox_type}
+▪️Цвет: {car.color}
+▪️Объем двигателя: {car.engine_capacity}
+▪️Вид топлива: {car.fuel_type}
+▪️Состояние машины: {car.machine_condition}
+▪️Количество владельцев: {car.number_of_owners}
+▪️Город: {car.city}
+▪️Вид оплаты: {car.payment_type}
+▪️Телефон для связи: {car.phone_number}
         
-        ▪️Модель и марка машины: {car.model}
-        ▪️Цена: {car.price}
-        ▪️Тип кузова: {car.body_type}
-        ▪️Год выпуска: {car.issue_year}
-        ▪️Пробег: {car.mileage}
-        ▪️Тип коробки передач: {car.gearbox_type}
-        ▪️Цвет: {car.color}
-        ▪️Объем двигателя: {car.engine_capacity}
-        ▪️Вид топлива: {car.fuel_type}
-        ▪️Состояние машины: {car.machine_condition}
-        ▪️Количество владельцев: {car.number_of_owners}
-        ▪️Город: {car.city}
-        ▪️Вид оплаты: {car.payment_type}
-        ▪️Телефон для связи: {car.phone_number}
         
-        
-        ▪️Доп. Опции: {car.additional_options}"""
+▪️Доп. Опции: {car.additional_options}"""
     }
 
     bot.send_message(message.chat.id, text=text[language])
@@ -561,7 +566,7 @@ def handle_body_type(bot: TeleBot, callback: types.CallbackQuery):
         bot.register_next_step_handler(msg, partial(get_body_type, bot=bot, language=user.language, car=car))
     else:
         car.body_type = body_type[callback.data][user.language]
-        update(car)
+        set_body_type(car.id, car.body_type)
 
         text = {
             UZBEK_LANGUAGE: 'Kilometr:',
@@ -586,7 +591,7 @@ def handle_gearbox_type(bot: TeleBot, callback: types.CallbackQuery):
         bot.register_next_step_handler(msg, partial(get_gearbox_type, bot=bot, language=user.language, car=car))
     else:
         car.gearbox_type = gearbox_type[callback.data][user.language]
-        update(car)
+        set_gearbox_type(car.id, car.gearbox_type)
 
         text = {
             UZBEK_LANGUAGE: 'Chiqarilgan yili:',
@@ -611,6 +616,7 @@ def handle_color(bot: TeleBot, callback: types.CallbackQuery):
         bot.register_next_step_handler(msg, partial(get_color, bot=bot, language=user.language, car=car))
     else:
         car.color = color[callback.data][user.language]
+        set_color(car.id, car.color)
 
         text = {
             UZBEK_LANGUAGE: 'Dvigatel hajmi:',
@@ -626,7 +632,7 @@ def handle_fuel_type(bot: TeleBot, callback: types.CallbackQuery):
     car = get_last_car_by_user_id(user.id)
 
     car.fuel_type = fuel_type[callback.data][user.language]
-    update(car)
+    set_fuel_type(car.id, car.fuel_type)
 
     markup = types.InlineKeyboardMarkup()
     excellent = types.InlineKeyboardButton(machine_condition[CALLBACK_DATA_MACHINE_CONDITION_EXCELLENT][user.language],
@@ -653,7 +659,7 @@ def handle_machine_condition(bot: TeleBot, callback: types.CallbackQuery):
     car = get_last_car_by_user_id(user.id)
 
     car.machine_condition = machine_condition[callback.data][user.language]
-    update(car)
+    set_machine_condition(car.id, car.machine_condition)
 
     markup = types.InlineKeyboardMarkup()
     one = types.InlineKeyboardButton(number_of_owners[CALLBACK_DATA_NUMBER_OF_OWNERS_1][user.language],
@@ -689,7 +695,7 @@ def handle_number_of_owners(bot: TeleBot, callback: types.CallbackQuery):
         bot.register_next_step_handler(msg, partial(get_number_of_owners, bot=bot, language=user.language, car=car))
     else:
         car.number_of_owners = number_of_owners[callback.data][user.language]
-        update(car)
+        set_number_of_owners(car.id, car.number_of_owners)
 
         text = {
             UZBEK_LANGUAGE: 'Aloqa telefon raqami:',
@@ -714,7 +720,7 @@ def handle_city(bot: TeleBot, callback: types.CallbackQuery):
         bot.register_next_step_handler(msg, partial(get_city, bot=bot, language=user.language, car=car))
     else:
         car.city = city[callback.data][user.language]
-        update(car)
+        set_city(car.id, car.city)
 
         markup = types.InlineKeyboardMarkup()
         cash = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_CASH][user.language],
@@ -742,7 +748,7 @@ def handle_payment_type(bot: TeleBot, callback: types.CallbackQuery):
     car = get_last_car_by_user_id(user.id)
 
     car.payment_type = payment_types[callback.data][user.language]
-    update(car)
+    set_payment_type(car.id, car.payment_type)
 
     text = {
         UZBEK_LANGUAGE: "Qo'shimcha variantlar:",

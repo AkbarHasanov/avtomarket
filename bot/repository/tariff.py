@@ -1,20 +1,24 @@
-from bot.database.session import db
+from bot.database.session import get_db
 from bot.models.tariff import Translation, Tariff
 from const import *
 
 
 def get_tariffs():
+    db = next(get_db())
     return db.query(Tariff).all()
 
 
 def get_translation(tariff_id, language) -> Translation:
+    get_db()
     return db.query(Translation).filter_by(tariff_id=tariff_id, language=language).first()
 
 
 def get_by_callback_data(callback_data):
+    get_db()
     return db.query(Tariff).filter_by(callback_data=callback_data).first()
 
 def init_tariffs():
+    get_db()
     db.add_all([
         Tariff(
             amount=49000,

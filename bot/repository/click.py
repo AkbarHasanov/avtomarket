@@ -1,8 +1,9 @@
 from bot.models.click import Click
-from bot.database.session import db
+from bot.database.session import get_db
 
 
 def create(transaction: Click)->int:
+    db = next(get_db())
     db.add(transaction)
     db.commit()
     db.refresh(transaction)
@@ -11,4 +12,5 @@ def create(transaction: Click)->int:
 
 
 def get(transaction_id: int):
+    db = next(get_db())
     return db.query(Click).filter(Click.id == transaction_id).first()

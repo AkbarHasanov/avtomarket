@@ -7,6 +7,8 @@ def register_callback_handlers(bot: TeleBot):
     @bot.callback_query_handler(func=lambda callback: callback.data)
     def check_callback_data(callback: types.CallbackQuery):
         print(callback.data)
+        bot.edit_message_reply_markup(callback.message.chat.id, message_id=callback.message.message_id,
+                                      reply_markup=None)
         if callback.data == CALLBACK_DATA_RU:
             language_handler.handle_russian(bot, callback)
 
