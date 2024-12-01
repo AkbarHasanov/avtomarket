@@ -14,11 +14,11 @@ def update_tariff(car: Car, tariff: str):
     db.refresh(car)
 
 
-def get_last_car_by_user_id(user_id: str) -> Car:
+def get_last_car_by_user_id(user_id: int) -> Car:
     return db.query(Car).filter(Car.user_id == user_id).order_by(Car.created_at.desc()).limit(1).one_or_none()
 
 
-def get_car_by_id(car_id: str) -> Car:
+def get_car_by_id(car_id: int) -> Car:
     return db.query(Car).filter(Car.id == car_id).order_by(Car.created_at.desc()).limit(1).one_or_none()
 
 
@@ -34,6 +34,10 @@ def get_photo_count(car_id: int) -> int:
 
 def update_status(car: Car, status: PaymentStatus):
     car.payment_status = status
+    db.commit()
+    db.refresh(car)
+
+def update(car: Car):
     db.commit()
     db.refresh(car)
 

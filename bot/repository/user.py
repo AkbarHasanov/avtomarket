@@ -14,7 +14,7 @@ def set_language(user: User, language: str):
     db.refresh(user)
 
 
-def get_user_by_chat_id(chat_id: int):
+def get_user_by_chat_id(chat_id: int)->User:
     db.commit()
     return db.query(User).filter(User.chat_id == chat_id).first()
 

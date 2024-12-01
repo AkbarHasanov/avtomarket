@@ -17,7 +17,9 @@ if not get_tariffs():
 if __name__ == "__main__":
     print("Setting up webhook...")
     bot.remove_webhook()
-    bot.set_webhook(url=WEBHOOK_URL)
+    # bot.set_webhook(url=WEBHOOK_URL)
+
+    bot.infinity_polling()
 
     print(f"Webhook set at: {WEBHOOK_URL}")
     print("Starting Flask server...")
