@@ -355,8 +355,7 @@ def get_issue_year(message, bot: TeleBot, car: Car, language: str):
         RUSSIAN_LANGUAGE: "Цвет:"
     }
 
-    msg = bot.send_message(message.chat.id, text=text[language], reply_markup=markup)
-    bot.register_next_step_handler(msg, partial(get_color, bot=bot, language=language, car=car))
+    bot.send_message(message.chat.id, text=text[language], reply_markup=markup)
 
 
 def get_color(message, bot: TeleBot, car: Car, language: str):
@@ -442,15 +441,15 @@ def get_city(message, bot: TeleBot, car: Car, language: str):
     set_city(car.id, message.text)
 
     markup = types.InlineKeyboardMarkup()
-    cash = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_CASH][user.language],
+    cash = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_CASH][language],
                                       callback_data=CALLBACK_DATA_PAYMENT_TYPE_CASH)
-    leasing = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_LEASING][user.language],
+    leasing = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_LEASING][language],
                                          callback_data=CALLBACK_DATA_PAYMENT_TYPE_LEASING)
-    transfer = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_TRANSFER][user.language],
+    transfer = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_TRANSFER][language],
                                           callback_data=CALLBACK_DATA_PAYMENT_TYPE_TRANSFER)
-    credit = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_CREDIT][user.language],
+    credit = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_CREDIT][language],
                                         callback_data=CALLBACK_DATA_PAYMENT_TYPE_CREDIT)
-    installment = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_INSTALLMENT][user.language],
+    installment = types.InlineKeyboardButton(payment_types[CALLBACK_DATA_PAYMENT_TYPE_INSTALLMENT][language],
                                              callback_data=CALLBACK_DATA_PAYMENT_TYPE_INSTALLMENT)
     markup.add(cash, leasing, transfer, credit, installment)
 
@@ -677,8 +676,7 @@ def handle_machine_condition(bot: TeleBot, callback: types.CallbackQuery):
         RUSSIAN_LANGUAGE: "Количество владельцев:"
     }
 
-    msg = bot.send_message(callback.message.chat.id, text=text[user.language], reply_markup=markup)
-    bot.register_next_step_handler(msg, partial(get_number_of_owners, bot=bot, language=user.language, car=car))
+    bot.send_message(callback.message.chat.id, text=text[user.language], reply_markup=markup)
 
 
 def handle_number_of_owners(bot: TeleBot, callback: types.CallbackQuery):
@@ -740,7 +738,7 @@ def handle_city(bot: TeleBot, callback: types.CallbackQuery):
             RUSSIAN_LANGUAGE: "Выберете вид оплаты, доступны такие виды как (Наличка/Кредит/Лизинг/Рассрочка):"
         }
 
-        msg = bot.send_message(callback.message.chat.id, text=text[user.language], reply_markup=markup)
+        bot.send_message(callback.message.chat.id, text=text[user.language], reply_markup=markup)
 
 
 def handle_payment_type(bot: TeleBot, callback: types.CallbackQuery):

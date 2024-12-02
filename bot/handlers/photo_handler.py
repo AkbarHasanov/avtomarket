@@ -30,7 +30,7 @@ def register_photo_handlers(bot: TeleBot):
 
         count = get_photo_count(car.id)
 
-        if count == 6:
+        if count >= 6:
             text = {
                 UZBEK_LANGUAGE: f'Клиент ознакомился с планом\n\nЮзернейм: @{message.from_user.username}',
                 RUSSIAN_LANGUAGE: f'Клиент ознакомился с планом\n\nЮзернейм: @{message.from_user.username}'

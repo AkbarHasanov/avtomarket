@@ -68,20 +68,20 @@ def send_payment_success_message(bot: TeleBot, car: Car):
         if i == len(car.photos) - 1:
             caption = f"""🔥{car.model}-{car.price}🔥
             
-            ▪️Модель и марка машины: {car.model}
-            ▪️Цена: {car.price}
-            ▪️Тип кузова: {car.body_type}
-            ▪️Год выпуска: {car.issue_year}
-            ▪️Пробег: {car.mileage}
-            ▪️Тип коробки передач: {car.gearbox_type}
-            ▪️Цвет: {car.color}
-            ▪️Объем двигателя: {car.engine_capacity}
-            ▪️Вид топлива: {car.fuel_type}
-            ▪️Состояние машины: {car.machine_condition}
-            ▪️Количество владельцев: {car.number_of_owners}
-            ▪️Телефон для связи: {car.phone_number}
-            ▪️Город: {car.city}
-            ▪️Вид оплаты: {car.payment_type}"""
+▪️Модель и марка машины: {car.model}
+▪️Цена: {car.price}
+▪️Тип кузова: {car.body_type}
+▪️Год выпуска: {car.issue_year}
+▪️Пробег: {car.mileage}
+▪️Тип коробки передач: {car.gearbox_type}
+▪️Цвет: {car.color}
+▪️Объем двигателя: {car.engine_capacity}
+▪️Вид топлива: {car.fuel_type}
+▪️Состояние машины: {car.machine_condition}
+▪️Количество владельцев: {car.number_of_owners}
+▪️Телефон для связи: {car.phone_number}
+▪️Город: {car.city}
+▪️Вид оплаты: {car.payment_type}"""
 
         photos.append(types.InputMediaPhoto(types.InputFile(photo.path), caption=caption))
 

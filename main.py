@@ -25,10 +25,10 @@ logger = logging.getLogger('telebot')  # Get the logger for the telebot library
 if __name__ == "__main__":
     print("Setting up webhook...")
     bot.remove_webhook()
-    # bot.set_webhook(url=WEBHOOK_URL)
+    bot.set_webhook(url=WEBHOOK_URL)
 
-    bot.infinity_polling()
+    # bot.infinity_polling()
 
     print(f"Webhook set at: {WEBHOOK_URL}")
     print("Starting Flask server...")
-    # app.run(host=HOST, port=PORT)
+    app.run(host=HOST, port=PORT)
